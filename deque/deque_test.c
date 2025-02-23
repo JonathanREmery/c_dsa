@@ -135,8 +135,6 @@ void test_mixed_operations() {
 
 // Test deque behavior
 int main() {
-    printf("[DEQUE] Running tests...\n");
-
     // Run tests
     test_deque_create();
     test_push_front();

@@ -84,8 +84,6 @@ void test_queue_peek() {
 
 // Test queue behavior
 int main() {
-    printf("[QUEUE] Running tests...\n");
-
     // Run tests
     test_queue_create();
     test_enqueue();

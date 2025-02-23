@@ -38,3 +38,15 @@ Functionality:
 - `deque_peek_front(deque)`: Peek at the front value of the deque
 - `deque_peek_back(deque)`: Peek at the back value of the deque
 - `deque_destroy(deque)`: Destroy the deque
+
+### Building binaries
+
+```bash
+make build
+```
+
+### Running tests
+
+```bash
+make test
+```

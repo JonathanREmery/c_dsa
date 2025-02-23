@@ -112,8 +112,6 @@ void test_stack_lifo() {
 
 // Test stack behavior
 int main() {
-    printf("[STACK] Running tests...\n");
-
     // Run tests
     test_stack_create();
     test_stack_push();
