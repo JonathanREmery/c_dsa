@@ -39,6 +39,19 @@ Functionality:
 - `deque_peek_back(deque)`: Peek at the back value of the deque
 - `deque_destroy(deque)`: Destroy the deque
 
+## Linked List
+
+The linked list is a linear data structure that stores a collection of elements in a sequential manner. Each node in the list contains a value and a pointer to the next node in the list.
+
+Functionality:
+
+- `linked_list_create(element_size, list_size)`: Create a new linked list
+- `linked_list_add(list, value)`: Add a value to the linked list
+- `linked_list_add_at(list, value, index)`: Add a value to the linked list at a specific index
+- `linked_list_remove(list)`: Remove a value from the linked list
+- `linked_list_remove_at(list, index)`: Remove a value from the linked list at a specific index
+- `linked_list_destroy(list)`: Destroy the linked list
+
 ### Building binaries
 
 ```bash

@@ -1,14 +1,15 @@
 CC=gcc
 CFLAGS=-Wall
 
-all: bin/stack tests/stack_test bin/queue tests/queue_test bin/deque tests/deque_test
+all: bin/stack tests/stack_test bin/queue tests/queue_test bin/deque tests/deque_test bin/linked_list tests/linked_list_test
 
-build: bin/stack bin/queue bin/deque
+build: bin/stack bin/queue bin/deque bin/linked_list
 
-test: tests/stack_test tests/queue_test tests/deque_test
+test: tests/stack_test tests/queue_test tests/deque_test tests/linked_list_test
 	@./tests/stack_test
 	@./tests/queue_test
 	@./tests/deque_test
+	@./tests/linked_list_test
 
 clean:
 	@rm -rf bin
@@ -37,3 +38,11 @@ bin/deque: deque/main.c deque/deque.h deque/deque.c
 tests/deque_test: deque/deque_test.c deque/deque.h deque/deque.c
 	@mkdir -p tests
 	$(CC) $(CFLAGS) deque/deque_test.c deque/deque.c -o tests/deque_test
+
+bin/linked_list: linked_list/main.c linked_list/linked_list.h linked_list/linked_list.c
+	@mkdir -p bin
+	$(CC) $(CFLAGS) linked_list/main.c linked_list/linked_list.c -o bin/linked_list
+
+tests/linked_list_test: linked_list/linked_list_test.c linked_list/linked_list.h linked_list/linked_list.c
+	@mkdir -p tests
+	$(CC) $(CFLAGS) linked_list/linked_list_test.c linked_list/linked_list.c -o tests/linked_list_test
