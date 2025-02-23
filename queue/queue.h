@@ -11,8 +11,7 @@
 typedef struct {
     uint64_t element_size;         // Size of each element in the queue
     uint64_t queue_size;           // Maximum number of elements in the queue
-    uint64_t queued_elements;      // Number of elements in the queue
-    uint64_t dequeued_elements;    // Number of elements dequeued from the queue
+    uint64_t elements;             // Number of elements in the queue
     void*    base;                 // Pointer to the base of the queue
     void*    head;                 // Pointer to the head of the queue
     void*    tail;                 // Pointer to the tail of the queue

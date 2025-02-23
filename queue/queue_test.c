@@ -9,8 +9,7 @@ void test_queue_create() {
     assert(queue != NULL);
     assert(queue->element_size == sizeof(int));
     assert(queue->queue_size == 10);
-    assert(queue->queued_elements == 0);
-    assert(queue->dequeued_elements == 0);
+    assert(queue->elements == 0);
     queue_destroy(queue);
 }
 
@@ -19,7 +18,7 @@ void test_enqueue() {
     queue_t* queue = queue_create(sizeof(int), 10);
     int value = 10;
     queue_enqueue(queue, &value);
-    assert(queue->queued_elements == 1);
+    assert(queue->elements == 1);
     assert(*(int*)queue->head == value);
     queue_destroy(queue);
 }
@@ -31,8 +30,7 @@ void test_dequeue() {
     queue_enqueue(queue, &value);
     int* dequeued_value = (int*)queue_dequeue(queue);
     assert(*dequeued_value == value);
-    assert(queue->queued_elements == 1);
-    assert(queue->dequeued_elements == 1);
+    assert(queue->elements == 0);
     queue_destroy(queue);
 }
 
@@ -56,7 +54,7 @@ void test_queue_grow() {
     for (int i = 0; i < 11; i++) {
         queue_enqueue(queue, &i);
     }
-    assert(queue->queued_elements == 11);
+    assert(queue->elements == 11);
     assert(queue->queue_size == 20);
     queue_destroy(queue);
 }

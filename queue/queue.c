@@ -13,8 +13,7 @@ queue_t* queue_create(uint64_t element_size, uint64_t queue_size) {
     // Initialize the queue
     queue->element_size = element_size;
     queue->queue_size = queue_size;
-    queue->queued_elements = 0;
-    queue->dequeued_elements = 0;
+    queue->elements = 0;
     queue->base = malloc(queue_size * element_size);
     queue->head = queue->base;
     queue->tail = queue->base;
@@ -50,7 +49,7 @@ void queue_grow(queue_t* queue) {
  */
 void queue_enqueue(queue_t* queue, void* element) {
     // Grow the queue if it is full
-    if (queue->queued_elements == queue->queue_size) {
+    if (queue->elements == queue->queue_size) {
         queue_grow(queue);
     }
 
@@ -59,7 +58,7 @@ void queue_enqueue(queue_t* queue, void* element) {
 
     // Update the queue
     queue->tail += queue->element_size;
-    queue->queued_elements++;
+    queue->elements++;
 }
 
 /**
@@ -69,12 +68,12 @@ void queue_enqueue(queue_t* queue, void* element) {
  */
 void* queue_dequeue(queue_t* queue) {
     // Return NULL if the queue is empty
-    if (queue->queued_elements == queue->dequeued_elements) {
+    if (queue->elements == 0) {
         return NULL;
     }
 
     // Grow the queue if it is full
-    if (queue->queued_elements == queue->queue_size - 1) {
+    if (queue->elements == queue->queue_size - 1) {
         queue_grow(queue);
         queue->head += queue->element_size;
         queue->tail += queue->element_size;
@@ -85,7 +84,7 @@ void* queue_dequeue(queue_t* queue) {
 
     // Update the queue
     queue->head += queue->element_size;
-    queue->dequeued_elements++;
+    queue->elements--;
 
     // Return the element
     return element;
@@ -98,7 +97,7 @@ void* queue_dequeue(queue_t* queue) {
  */
 void* queue_peek(queue_t* queue) {
     // Return NULL if the queue is empty
-    if (queue->queued_elements == queue->dequeued_elements) {
+    if (queue->elements == 0) {
         return NULL;
     }
 
