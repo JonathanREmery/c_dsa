@@ -5,7 +5,7 @@
 // Test the linked list
 int main() {
     // Create a linked list
-    linked_list_t* list = linked_list_create(sizeof(int), 10);
+    linked_list_t* list = linked_list_create(sizeof(int));
 
     // Add 10 values to the list
     for (int i = 0; i < 10; i++) {

@@ -13,16 +13,14 @@ void node_destroy(node_t* node) {
 /**
  * Creates a linked list
  * @param element_size The size of the element in the list
- * @param list_size The size of the list
  * @return The linked list
  */
-linked_list_t* linked_list_create(uint64_t element_size, uint64_t list_size) {
+linked_list_t* linked_list_create(uint64_t element_size) {
     // Allocate memory for the linked list
     linked_list_t* list = malloc(sizeof(linked_list_t));
 
     // Initialize the linked list
     list->element_size = element_size;
-    list->list_size = list_size;
     list->num_nodes = 0;
     list->head = NULL;
     list->tail = NULL;
@@ -37,28 +35,34 @@ linked_list_t* linked_list_create(uint64_t element_size, uint64_t list_size) {
  * @param value The value to add
  */
 void linked_list_add(linked_list_t* list, void* value) {    
-    // Allocate memory for the node
-    node_t* node = malloc(sizeof(node_t));
-
-    // Set the value of the node
-    node->value = malloc(list->element_size);
-    memcpy(node->value, value, list->element_size);
-
-    // Set the index of the node
-    node->index = list->num_nodes;
-
-    // Set the next to NULL
-    node->next = NULL;
-
-    // If the tail is not NULL, set the next node of the tail to the new node
-    if (list->tail != NULL) {
-        list->tail->next = node;
-        list->tail = node;
+    // Check if the list or value is NULL
+    if (!list || !value) {
+        return;
     }
 
-    // If the head is NULL, set the head and tail to the new node
+    // Allocate memory for the node
+    node_t* node = malloc(sizeof(node_t));
+    if (!node) return;
+
+    // Allocate memory for the value
+    node->value = malloc(list->element_size);
+    if (!node->value) {
+        free(node);
+        return;
+    }
+
+    // Set the value and index of the node
+    memcpy(node->value, value, list->element_size);
+    node->index = list->num_nodes;
+    node->next = NULL;
+
+    // If the list is empty, set both head and tail to the new node
     if (list->head == NULL) {
         list->head = node;
+        list->tail = node;
+    } else {
+        // Otherwise, add to the tail and update tail
+        list->tail->next = node;
         list->tail = node;
     }
 
@@ -73,72 +77,58 @@ void linked_list_add(linked_list_t* list, void* value) {
  * @param index The index to add the value at
  */
 void linked_list_add_at(linked_list_t* list, void* value, uint64_t index) {
-    // Allocate memory for the node
-    node_t* node = malloc(sizeof(node_t));
-
-    // Set the value of the node
-    node->value = malloc(list->element_size);
-    memcpy(node->value, value, list->element_size);
-
-    // Set the index of the node
-    node->index = index;
-
-    // Set the next to NULL
-    node->next = NULL;
-
-    // If the head is NULL, set the head and tail to the new node
-    if (list->head == NULL) {
-        list->head = node;
-        list->tail = node;
+    // Check if the insertion is possible
+    if (!list || !value || index > list->num_nodes) {
         return;
     }
 
-    // Iterate through the list
+    // Allocate memory for the node
+    node_t* node = malloc(sizeof(node_t));
+    if (!node) return;
+
+    // Allocate memory for the value
+    node->value = malloc(list->element_size);
+    if (!node->value) {
+        free(node);
+        return;
+    }
+
+    // Set the value and index of the node
+    memcpy(node->value, value, list->element_size);
+    node->index = index;
+
+    // If the index is 0, insert the node at the head
+    if (index == 0) {
+        node->next = list->head;
+        list->head = node;
+
+        if (!list->tail) {
+            list->tail = node;
+        }
+
+        list->num_nodes++;
+        return;
+    }
+
+    // Iterate until the node before the index
     node_t* current = list->head;
-    bool inserted = false;
-    while (current != NULL) {
-        node_t* next = current->next;
+    for (int i = 0; i < index - 1; i++) {
+        current = current->next;
+    }
 
-        // Check if node should be inserted next
-        if (current->index == index - 1 && next != NULL) {
-            // Set the next node of the current node to the new node
-            current->next = node;
-
-            // Set the next node of the new node to the next node
-            node->next = next;
-
-            // Set the current node to the new node
-            current = node->next;
-
-            // Set the inserted flag, and increment the number of nodes in the list
-            inserted = true;
-            list->num_nodes++;
-        }
-
-        // If the node was inserted, increment the index of the current node and continue
-        if (inserted) {
-            current->index++;
-            current = current->next;
-            continue;
-        }
-
-        // Check if the next node is NULL
-        if (next == NULL) {
-            // If the node was inserted, break
-            if (inserted) {
-                break;
-            }
-
-            // Set the next node of the current node to the new node
-            current->next = node;
-
-            // Increment the number of nodes in the list and break
-            list->num_nodes++;
-            break;
-        }
-
-        // Set the current node to the next node
-        current = next;
+    // Insert the node
+    node->next = current->next;
+    current->next = node;
+    if (!node->next) {
+        list->tail = node;
+    }
+    list->num_nodes++;
+    
+    // Update the indices of the nodes after
+    current = node->next;
+    while (current) {
+        current->index++;
+        current = current->next;
     }
 }
 
@@ -148,43 +138,51 @@ void linked_list_add_at(linked_list_t* list, void* value, uint64_t index) {
  * @param index The index to remove the value at
  */
 void linked_list_remove_at(linked_list_t* list, uint64_t index) {
-    // Initialize the current node, and removed flag
-    node_t* current = list->head;
-    bool removed = false;
-
-    // Iterate through the list
-    while (current != NULL) {
-        // Get the next node
-        node_t* next = current->next;
-
-        // Check if the current node is the node to remove
-        if (current->index == index - 1 && next != NULL) {
-            // Set the next node of the current node to the next node of the next node
-            current->next = next->next;
-
-            // If the next node of the next node is not NULL, set the current node to the next node of the next node
-            if (next->next != NULL) {
-                current = next->next;
-            }
-
-            // Destroy the next node and set the removed flag
-            node_destroy(next);
-            removed = true;
-
-            // Decrement the number of nodes in the list
-            list->num_nodes--;
-        }
-
-        // If the node was removed, decrement the index of the current node and continue
-        if (removed) {
-            current->index--;
-            current = current->next;
-            continue;
-        }
-
-        // Set the current node to the next node
-        current = next;
+    // Check if removal is possible
+    if (!list || !list->head || index >= list->num_nodes) {
+        return;
     }
+
+    // Initialize the node to remove
+    node_t* to_remove;
+
+    // Check if removing the head
+    if (index == 0) {
+        // Remove the head
+        to_remove = list->head;
+        list->head = list->head->next;
+
+        // Set tail to NULL if needed
+        if (!list->head) {
+            list->tail = NULL;
+        }
+    } else {
+        // Iterate until the node before the index
+        node_t* current = list->head;
+        for (int i = 0; i < index - 1; i++) {
+            current = current->next;
+        }
+
+        // Remove the node
+        to_remove = current->next;
+        current->next = to_remove->next;
+
+        // Set tail to the current node if needed
+        if (!current->next) {
+            list->tail = current;
+        }
+    }
+
+    // Update the indices of the nodes after
+    node_t* current = to_remove->next;
+    while (current) {
+        current->index--;
+        current = current->next;
+    }
+
+    // Destroy the node and decrement the number of nodes
+    node_destroy(to_remove);
+    list->num_nodes--;
 }
 
 /**
@@ -192,33 +190,31 @@ void linked_list_remove_at(linked_list_t* list, uint64_t index) {
  * @param list The linked list
  */
 void linked_list_remove(linked_list_t* list) {
-    // Initialize the current node
-    node_t* node = list->head;
-
-    // Iterate through the list
-    while (node != NULL) {
-        // Get the next node
-        node_t* next = node->next;
-
-        // Check if the next node is NULL
-        if (next == NULL) {
-            break;
-        }
-
-        // Check if the next node of the next node is NULL
-        if (next->next == NULL) {
-            // Set the next node of the current node to NULL and destroy the next node
-            node->next = NULL;
-            node_destroy(next);
-
-            // Decrement the number of nodes in the list and break
-            list->num_nodes--;
-            break;
-        }
-
-        // Set the current node to the next node
-        node = next;
+    // Check if removal is possible
+    if (!list || !list->head) {
+        return;
     }
+
+    // If there is only one node
+    if (list->num_nodes == 1) {
+        node_destroy(list->head);
+        list->head = NULL;
+        list->tail = NULL;
+        list->num_nodes = 0;
+        return;
+    }
+
+    // Find the second to last node
+    node_t* current = list->head;
+    while (current->next != list->tail) {
+        current = current->next;
+    }
+
+    // Remove the last node
+    node_destroy(list->tail);
+    list->tail = current;
+    list->tail->next = NULL;
+    list->num_nodes--;
 }
 
 /**
@@ -226,19 +222,15 @@ void linked_list_remove(linked_list_t* list) {
  * @param list The linked list to destroy
  */
 void linked_list_destroy(linked_list_t* list) {
-    // Initialize the current node
-    node_t* node = list->head;
+    // Check if the list is NULL or empty
+    if (!list || !list->head) return;
 
-    // Iterate through the list
-    while (node != NULL) {
-        // Get the next node
-        node_t* next = node->next;
-
-        // Destroy the current node
-        node_destroy(node);
-
-        // Set the current node to the next node
-        node = next;
+    // Free all nodes
+    node_t* current = list->head;
+    while (current != NULL) {
+        node_t* next = current->next;
+        node_destroy(current);
+        current = next;
     }
 
     // Free the memory allocated for the linked list
