@@ -48,7 +48,7 @@ void queue_grow(queue_t* queue) {
  * @param queue Pointer to the queue
  * @param element Pointer to the element to enqueue
  */
-void enqueue(queue_t* queue, void* element) {
+void queue_enqueue(queue_t* queue, void* element) {
     // Grow the queue if it is full
     if (queue->queued_elements == queue->queue_size) {
         queue_grow(queue);
@@ -67,7 +67,7 @@ void enqueue(queue_t* queue, void* element) {
  * @param queue Pointer to the queue
  * @return Pointer to the element, NULL if the queue is empty
  */
-void* dequeue(queue_t* queue) {
+void* queue_dequeue(queue_t* queue) {
     // Return NULL if the queue is empty
     if (queue->queued_elements == queue->dequeued_elements) {
         return NULL;
@@ -89,6 +89,21 @@ void* dequeue(queue_t* queue) {
 
     // Return the element
     return element;
+}
+
+/**
+ * Peek at the element at the head of the queue
+ * @param queue Pointer to the queue
+ * @return Pointer to the element, NULL if the queue is empty
+ */
+void* queue_peek(queue_t* queue) {
+    // Return NULL if the queue is empty
+    if (queue->queued_elements == queue->dequeued_elements) {
+        return NULL;
+    }
+
+    // Return the element
+    return queue->head;
 }
 
 /**

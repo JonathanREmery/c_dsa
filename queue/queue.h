@@ -9,13 +9,13 @@
  * Queue structure
  */
 typedef struct {
-    uint64_t element_size;
-    uint64_t queue_size;
-    uint64_t queued_elements;
-    uint64_t dequeued_elements;
-    void* base;
-    void* head;
-    void* tail;
+    uint64_t element_size;         // Size of each element in the queue
+    uint64_t queue_size;           // Maximum number of elements in the queue
+    uint64_t queued_elements;      // Number of elements in the queue
+    uint64_t dequeued_elements;    // Number of elements dequeued from the queue
+    void*    base;                 // Pointer to the base of the queue
+    void*    head;                 // Pointer to the head of the queue
+    void*    tail;                 // Pointer to the tail of the queue
 } queue_t;
 
 /**
@@ -37,14 +37,21 @@ void queue_grow(queue_t* queue);
  * @param queue Pointer to the queue
  * @param element Pointer to the element to enqueue
  */
-void enqueue(queue_t* queue, void* element);
+void queue_enqueue(queue_t* queue, void* element);
 
 /**
  * Dequeue an element from the queue
  * @param queue Pointer to the queue
  * @return Pointer to the element, NULL if the queue is empty
  */
-void* dequeue(queue_t* queue);
+void* queue_dequeue(queue_t* queue);
+
+/**
+ * Peek at the element at the head of the queue
+ * @param queue Pointer to the queue
+ * @return Pointer to the element, NULL if the queue is empty
+ */
+void* queue_peek(queue_t* queue);
 
 /**
  * Destroy the queue

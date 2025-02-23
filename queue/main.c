@@ -9,12 +9,12 @@ int main() {
 
     // Enqueue 10 elements
     for (int i = 0; i < 10; i++) {
-        enqueue(queue, &i);
+        queue_enqueue(queue, &i);
     }
 
     // Dequeue 10 elements
     for (int i = 0; i < 10; i++) {
-        int* value = (int*)dequeue(queue);
+        int* value = (int*)queue_dequeue(queue);
 
         if (value != NULL) {
             printf("%d\n", *value);
@@ -30,12 +30,12 @@ int main() {
     // Enqueue 4 strings
     char* strings[] = {"AAA", "BBB", "CCC", "DDD"};
     for (int i = 0; i < 4; i++) {
-        enqueue(queue, strings[i]);
+        queue_enqueue(queue, strings[i]);
     }
 
     // Dequeue 4 strings
     for (int i = 0; i < 4; i++) {
-        char* value = (char*)dequeue(queue);
+        char* value = (char*)queue_dequeue(queue);
 
         if (value != NULL) {
             printf("%s\n", value);
